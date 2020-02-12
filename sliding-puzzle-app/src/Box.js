@@ -4,9 +4,10 @@ import { render } from 'react-dom';
 class Box extends Component {
     constructor(props) {
         super(props)
-        let { num } = props
-        this.num = num
-        this.id = 'b' + toString(num)
+        let { num, onClick, X, Y } = props
+        this.num = num != 0 ? num : null
+        this.x = X
+        this.y = Y
         this.BoxStyle = {
             border: 'solid',
             margin: '10px',
@@ -22,9 +23,9 @@ class Box extends Component {
 
     render() {
         return (
-            <div className={this.id} style={this.BoxStyle}>
-                <h1>{this.num}</h1>
-            </div>
+            <button className="box" className={props.num} style={this.BoxStyle} onClick={props.onClick} >
+                <h1>{props.num}</h1>
+            </button >
         )
     }
 }
