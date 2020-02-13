@@ -9,33 +9,57 @@ class Board extends Component {
         this.numCols = width // number of columns
         this.blockMatrix = []
         this.state = {
-            boardMatrix: []
+            board: [],
+            zeroLoc: null
         }
         this.init()
         this.render()
     }
 
     init() {
+        const matrix = []
         // creates a shuffled matrix of Box components
         for (let col = 0; col < this.numCols; col++) {
             let newRow = []
             for (let row = 0; row < this.numRows; row++) {
                 let newBox = (
-                    <Box num={(col * this.numCols) + row} />
+                    // { num, onClick, X, Y }
+                    <Box
+                        num={(col * this.numCols) + row}
+                        onClick={this.swap}
+                    />
                 )
                 newRow.push(newBox)
             }
-            this.blockMatrix.push(newRow)
+            matrix.push(newRow)
+        }
+        this.state = {
+            board: matrix,
+            zeroLoc: null
         }
         this.shuffleBoard()
     }
 
+    findZero(matrix) {
+        for (let row = 0; row < matrix.length; row++) {
+            for (let col = 0; col < matrix[0].length; col++) {
+                if (matrix[row][col] == 0) {
+                    return (row, col)
+                }
+            }
+        }
+    }
+
+
     shuffleBoard() {
         // shuffle the board
-        this.shuffleMatrix(this.blockMatrix)
-        // this.setState({
-        //     board: this.blockMatrix
-        // })
+        const newBoard = this.state.board
+        this.shuffleMatrix(newBoard)
+        const newZeroLoc = this.findZero(newBoard)
+        this.state = {
+            board: newBoard,
+            zeroLoc: newZeroLoc
+        }
     }
 
     shuffleMatrix(matrix) {
@@ -53,7 +77,11 @@ class Board extends Component {
     }
 
     render() {
-        return this.blockMatrix
+        return this.state.board
+    }
+
+    swap(box) {
+        return
     }
 }
 
