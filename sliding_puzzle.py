@@ -28,6 +28,7 @@ first set of moves found to solve a board is the fastest.
 
 from time import sleep
 from queue import Queue
+from heapq import heappush, heappop
 
 
 def is_solved(puzzle):
@@ -97,6 +98,21 @@ def list_puzzle_to_tuple(puzzle):
     return tuple(tuple(row) for row in puzzle)
 
 
+def manhattan_dist(puzzle):
+    '''returns the manhattan distance of a board to its solved state
+    This is the sum of the manhattan distances (aka l1 distance/ taxicab
+    distance) from each number to its desired location.
+    '''
+    dist = 0
+    for x in range(len(puzzle)):
+        for y in range(len(puzzle[0])):
+            if puzzle[x][y] != 0:
+                val = puzzle[x][y]
+                des_x, des_y = divmod(val - 1, len(puzzle[0]))
+                dist += abs(x - des_x) + abs(y - des_y)
+    return dist
+
+
 def solve(original_puzzle):
     '''
     Calculates the minimum number of moves using breadth first search.
@@ -122,7 +138,7 @@ def solve(original_puzzle):
     if type(original_puzzle) == list:
         original_puzzle = list_puzzle_to_tuple(original_puzzle)
     if is_solved(original_puzzle):
-        return True, []
+        return 0, []
     # Create a fifo queue to store boards
     # q.put(item, bool) put an item in the queue, if false dont
     # q.get() removes and returns the next item
@@ -149,6 +165,45 @@ def solve(original_puzzle):
                 # add the board, num_moves + 1, and all_moves +[move] to the q
                 # NOTE: this could be way cleaner with a board class
                 q.put((board, num_moves + 1, all_moves + [move]))
+                # add the board to seen
+                seen.add(board)
+    # if the queue is empty it means all possible perms have been seen and none
+    # were solved. no solution, return -1
+    return -1, None
+
+
+def optimized_solve(original_puzzle):
+    '''Uses A* method with an heuristic for how solved a given puzzle  state
+    is. Uses manhattan distance as the heuristic.'''
+    if type(original_puzzle) == list:
+        original_puzzle = list_puzzle_to_tuple(original_puzzle)
+    if is_solved(original_puzzle):
+        return 0, []
+    min_heap = []
+    man_dist = manhattan_dist(original_puzzle)
+    min_heap.append((man_dist, original_puzzle, []))
+    # create a set of seen boards to make sure we dont follow the same path
+    # more than once
+    seen = set()
+    seen.add(original_puzzle)
+    while len(min_heap) > 0:
+        # remove the next board from the queue, alone w num moves, and allmoves
+        _, curr_board, all_moves = heappop(min_heap)
+        # find the next possible board moves
+        next_board_moves = moves(curr_board)
+        # loop through the new boards
+        for board, move in next_board_moves:
+            # ensure the board has not been seen
+            if board not in seen:
+                # if so check if the board is solved
+                if is_solved(board):
+                    # if it is return the board and the moves
+                    return len(all_moves) + 1, all_moves + [move]
+                # add the board, num_moves + 1, and all_moves +[move] to the q
+                # NOTE: this could be way cleaner with a board class
+                man_dist = manhattan_dist(board) + len(all_moves) + 1
+                board_obj = man_dist, board, all_moves + [move]
+                heappush(min_heap, board_obj)
                 # add the board to seen
                 seen.add(board)
     # if the queue is empty it means all possible perms have been seen and none
@@ -195,7 +250,10 @@ def display_solution(board, min_moves, all_moves, sleep_len=1):
 
 
 # Some random boards to chose from
-
+solved_2x2 = (
+    (1, 2),
+    (3, 0)
+)
 easy_2x4 = (
     (6, 5, 2, 1),
     (0, 7, 3, 4)
@@ -268,10 +326,24 @@ hard_3x4 = (
     (1, 9, 2, 0)
 )
 
+try_4x4 = (
+    (4, 15, 11, 10),
+    (8, 2, 9, 3),
+    (1, 6, 5, 12),
+    (7, 13, 14, 0)
+)
+
+unsolveable_4x4 = (
+    (15, 4, 11, 10),
+    (8, 2, 9, 3),
+    (1, 6, 5, 12),
+    (7, 13, 14, 0)
+)
+
 if __name__ == '__main__':
     # change the value of board to use a different one from above
-    board = medium_3x4
-    min_moves, all_moves = solve(board)
+    board = unsolveable_4x4
+    min_moves, all_moves = optimized_solve(board)
     if min_moves == -1:
         print('This board is unsolveable.')
         for row in board:
