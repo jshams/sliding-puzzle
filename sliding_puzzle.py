@@ -135,6 +135,8 @@ def solve(original_puzzle):
     iterations though a 3x4 can more than 1000 times longer at 239,500,800
     iterations.
     '''
+    if not is_solveable(original_puzzle):
+        return -1, None
     if type(original_puzzle) == list:
         original_puzzle = list_puzzle_to_tuple(original_puzzle)
     if is_solved(original_puzzle):
@@ -175,6 +177,8 @@ def solve(original_puzzle):
 def optimized_solve(original_puzzle):
     '''Uses A* method with an heuristic for how solved a given puzzle  state
     is. Uses manhattan distance as the heuristic.'''
+    if not is_solveable(original_puzzle):
+        return -1, None
     if type(original_puzzle) == list:
         original_puzzle = list_puzzle_to_tuple(original_puzzle)
     if is_solved(original_puzzle):
@@ -247,6 +251,64 @@ def display_solution(board, min_moves, all_moves, sleep_len=1):
     for row in board:
         print(f'\t{row}')
     print(END)
+
+
+def is_solveable(puzzle):
+    '''determines if a given board is solveable depending on a set of rules.
+    The factors include-
+    length and width of the puzzle
+    the inversion count of a puzzle
+    the height of the zero from the bottom of the puzzle
+    https://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
+    '''
+    inversion_count = num_inversions(puzzle)
+    # If the width is odd, then every solvable state has an even number of
+    # inversions
+    if len(puzzle) % 2 != 0 and len(puzzle[0]) % 2 != 0:
+        return inversion_count % 2 == 0
+    # If the width is even, then every solvable state has
+    elif len(puzzle) % 2 == 1 or len(puzzle[0]) % 2 == 1:
+        x, _ = find_zero(puzzle)
+        zero_height = (x - 1) % 2
+        if zero_height == 1:
+            return inversion_count % 2 == 0
+        else:
+            return inversion_count % 2 == 1
+    else:
+        x, _ = find_zero(puzzle)
+        zero_height = (x) % 2
+        # an even number of inversions if the blank is on an odd numbered row
+        # counting from the bottom
+        if zero_height == 1:
+            return inversion_count % 2 == 0
+        # an odd number of inversions if the blank is on an even numbered row
+        # counting from the bottom;
+        else:
+            return inversion_count % 2 == 1
+
+
+def num_inversions(puzzle):
+    '''calculates the number of inversions of a puzzle.
+    This works by flattening the 2d puzzle arr into a 1d arr without
+    the zero. Then for each number, we count the number of numbers that
+    succeed it in the arr that are less than itself, and take the sum of
+    all those'''
+    # flatten the puzzle
+    one_d_puzzle = []
+    for arr in puzzle:
+        one_d_puzzle += arr
+    # get rid of the zero
+    one_d_puzzle = [num for num in one_d_puzzle if num != 0]
+    # for each number in the one d puzzle
+    count = 0
+    for i in range(len(one_d_puzzle)):
+        # for each number succeeding the current number
+        for j in range(i, len(one_d_puzzle)):
+            # if the number is greater than the latter number
+            if one_d_puzzle[i] > one_d_puzzle[j]:
+                # add 1 to the inversion count
+                count += 1
+    return count
 
 
 # Some random boards to chose from
@@ -326,6 +388,12 @@ hard_3x4 = (
     (1, 9, 2, 0)
 )
 
+unsolveable_3x4 = (
+    (1, 3, 2, 8),
+    (5, 11, 0, 7),
+    (9, 6, 4, 10)
+)
+
 try_4x4 = (
     (4, 15, 11, 10),
     (8, 2, 9, 3),
@@ -334,15 +402,23 @@ try_4x4 = (
 )
 
 unsolveable_4x4 = (
-    (15, 4, 11, 10),
+    (4, 7, 11, 10),
     (8, 2, 9, 3),
     (1, 6, 5, 12),
-    (7, 13, 14, 0)
+    (15, 13, 14, 0)
+)
+
+try_5x5 = (
+    (23, 19, 10, 3, 8),
+    (0, 2, 24, 17, 16),
+    (5, 14, 11, 21, 20),
+    (22, 1, 6, 7, 12),
+    (18, 15, 9, 13, 4)
 )
 
 if __name__ == '__main__':
     # change the value of board to use a different one from above
-    board = unsolveable_4x4
+    board = try_4x4
     min_moves, all_moves = optimized_solve(board)
     if min_moves == -1:
         print('This board is unsolveable.')
