@@ -6,9 +6,9 @@
 
 .board {
     margin: auto;
-    width: 500px;
+    /* width: 420px; */
     margin-left: 13%;
     border: 3px solid #73AD21;
-    background-color: green;
+    background-color: white;
 }
 
