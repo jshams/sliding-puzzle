@@ -7,19 +7,20 @@ class Tile {
         this.width = width
         this.x = x
         this.y = y
-        this.color = `rgb(
-            ${Math.floor(255 * Math.random())},
-            ${Math.floor(255 * Math.random())},
-            ${Math.floor(255 * Math.random())}
-        )`
-
+        this.color = 'yellow'
+        this.fontsize = Math.floor(this.width / 2.4)
     }
 
     draw() {
-        ctx.fillStyle = this.color
-        ctx.fillRect(this.x, this.y, this.width, this.width)
+        // ctx.fillStyle = 'white'
+        // ctx.fillStyle(this.x, this.y, this.width, this.width)
         ctx.fillStyle = 'black'
-        ctx.font = "120px Georgia";
+        ctx.fillRect(this.x + 2, this.y + 2, this.width - 4, this.width - 4)
+
+        ctx.fillStyle = this.color
+        ctx.fillRect(this.x + 10, this.y + 10, this.width - 20, this.width - 20)
+        ctx.fillStyle = 'black'
+        ctx.font = `${this.fontsize}px Georgia`
         ctx.fillText(this.num.toString(), this.x + this.width / 2.5, this.y + this.width / 1.6)
     }
 
@@ -123,8 +124,6 @@ class Board {
         let dist = Math.abs(xdiff) + Math.abs(ydiff)
         // if the distance is not 1 its an invalid swap
         if (dist != 1) {
-            console.log(tileCoordinates[0], this.zeroLoc[0])
-            console.log(xdiff, ydiff)
             console.log('invalid move')
             // do nothing
             return
@@ -149,6 +148,24 @@ const state = [
     [4, 5, 6],
     [7, 8, 0],
 ]
-const board = new Board(state)
 
+const state4x4 = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 10, 11, 12],
+    [13, 14, 15, 0]
+]
+const board = new Board(state4x4)
 board.display()
+
+
+canvas.onclick = function (e) {
+    let x = e.layerX
+    let y = e.layerY
+    console.log('x', x)
+    console.log('y', y)
+    console.log("box", Math.floor((y - 7) / board.tileWidth), Math.floor((x - 49) / board.tileWidth))
+    let moveX = Math.floor((y - 7) / board.tileWidth)
+    let moveY = Math.floor((x - 49) / board.tileWidth)
+    board.move([moveX, moveY])
+}
