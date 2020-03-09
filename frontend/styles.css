@@ -1,0 +1,14 @@
+/* .outter {
+    width: 1000px;
+    background-color: red;
+
+} */
+
+.board {
+    margin: auto;
+    width: 500px;
+    margin-left: 13%;
+    border: 3px solid #73AD21;
+    background-color: green;
+}
+
