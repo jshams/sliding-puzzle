@@ -1,6 +1,9 @@
 const canvas = document.getElementById('board')
 const ctx = canvas.getContext('2d')
-
+const BOARDEL = document.getElementById('board')
+const NUMMOVES = document.getElementById('num-moves')
+const SHUFFLEBTN = document.getElementById('shuffle-btn')
+const CONGRATS = document.getElementById('congrats')
 
 function fillRectBorderRadius(x, y, width, height, borderRadius, color) {
     /**
@@ -149,12 +152,22 @@ class Board {
 
     move(tileCoordinates) {
         // move the tile at this coordinate to the zero coordinate
+        // if the x coordinates are invalid do nothing
+        if ((tileCoordinates[0] < 0) || (tileCoordinates[0] >= this.width)) {
+            console.log('invalid move: x coordinate out of bounds')
+            return
+        }
+        // if the y coordinates are invalid do nothing
+        if ((tileCoordinates[1] < 0) || (tileCoordinates[1] >= this.height)) {
+            console.log('invalid move: y coordinate out of bounds')
+            return
+        }
         let xdiff = tileCoordinates[0] - this.zeroLoc[0]
         let ydiff = tileCoordinates[1] - this.zeroLoc[1]
         let dist = Math.abs(xdiff) + Math.abs(ydiff)
-        // if the distance is not 1 its an invalid swap
+        // if the distance of tile from empty is not 1 its an invalid swap
         if (dist != 1) {
-            console.log('invalid move')
+            console.log('invalid move: tile not next to empty tile')
             // do nothing
             return
         }
@@ -170,6 +183,28 @@ class Board {
         this.state[this.zeroLoc[0]][this.zeroLoc[1]] = this.state[tileCoordinates[0]][tileCoordinates[1]]
         this.state[tileCoordinates[0]][tileCoordinates[1]] = 0
         this.zeroLoc = tileCoordinates
+        return true
+    }
+
+    isSolved() {
+        // for x in range(len(puzzle)):
+        for (let y = 0; y < this.height; y++) {
+            //     for y in range(len(puzzle[-1])):
+            for (let x = 0; x < this.width; x++) {
+                // if x == len(puzzle) - 1 and y == len(puzzle[-1]) - 1:
+                if ((x === this.width - 1) && (y === this.height - 1)) {
+                    // continue
+                    continue
+                }
+                // if puzzle[x][y] != (x*len(puzzle[-1])) + (y + 1):
+                const realVal = this.state[y][x]
+                const desiredVal = (y * this.width) + (x + 1)
+                if (realVal != desiredVal) {
+                    return false
+                }
+            }
+        }
+        return true
     }
 }
 
@@ -177,10 +212,32 @@ class Game {
     constructor(len, width) {
         this.len = len
         this.wid = width
-        this.state = this.newState()
-        this.board = new Board(this.state)
+        this.board = new Board(this.newState())
         ctx.clearRect(0, 0, this.board.canvasWidth, this.board.canvasHeight)
+        this.shuffle(50)
         this.board.display()
+        this.numMoves = 0
+        this.isSolved = false
+    }
+
+    handleClick(e) {
+        let offX = BOARDEL.offsetLeft
+        let offY = BOARDEL.offsetTop
+        console.log('Offset x,y', offX, offY)
+        console.log('Expected (49, 7)')
+        let x = e.layerX
+        let y = e.layerY
+        console.log('x', x)
+        console.log('y', y)
+        console.log("box", Math.floor((y - offY) / this.board.tileWidth), Math.floor((x - offX) / this.board.tileWidth))
+        let moveX = Math.floor((y - offY) / this.board.tileWidth)
+        let moveY = Math.floor((x - offX) / this.board.tileWidth)
+        console.log('tilewidth:', this.board.tileWidth)
+        const didMove = this.board.move([moveX, moveY])
+        if (didMove) {
+            this.incNumMoves()
+            if (this.board.isSolved()) { this.congratulate() }
+        }
     }
 
     newState() {
@@ -200,42 +257,66 @@ class Game {
         boardMatrix.push(newRow)
         return boardMatrix
     }
+
+    shuffle(n) {
+        for (let i = 0; i < n; i++) {
+            this.randomMove()
+        }
+        this.numMoves = -1
+        this.incNumMoves()
+    }
+
+    randomMove() {
+        const zeroLoc = this.board.zeroLoc
+        const nextMoves = this.getNextMoves(zeroLoc)
+        const randomMoveChoice = this.randomChoice(nextMoves)
+        this.board.move(randomMoveChoice)
+    }
+
+    getNextMoves(zeroLoc) {
+        const x = zeroLoc[0]
+        const y = zeroLoc[1]
+        let nextMoves = []
+        // (x - 1, y) if x > 0
+        if (x > 0) {
+            nextMoves.push([x - 1, y])
+        }
+        // (x + 1, y) if x < len(puzzle) - 1
+        if (x < this.board.width - 1) {
+            nextMoves.push([x + 1, y])
+        }
+        // (x, y - 1) if y > 0
+        if (y > 0) {
+            nextMoves.push([x, y - 1])
+        }
+        // (x, y + 1) if y < len(puzzle[-1]) - 1
+        if (y < this.board.height - 1) {
+            nextMoves.push([x, y + 1])
+        }
+        return nextMoves
+    }
+
+    randomChoice(arr) {
+        return arr[Math.floor(Math.random() * arr.length)]
+    }
+
+    incNumMoves() {
+        this.numMoves += 1
+        NUMMOVES.innerHTML = this.numMoves.toString()
+    }
+
+    congratulate() {
+        CONGRATS.innerHTML = `Congratulations! You completed the puzzle in ${this.numMoves} moves!`
+    }
 }
 
-const state = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 0],
-]
 
-const state3x4 = [
-    [1, 2, 3, 4],
-    [5, 6, 7, 8],
-    [9, 10, 11, 0]
-]
-
-const state4x4 = [
-    [1, 2, 3, 4],
-    [5, 6, 7, 8],
-    [9, 10, 11, 12],
-    [13, 14, 15, 0]
-]
-const board = new Board(state4x4)
-board.display()
-
+const game = new Game(3, 3)
 
 canvas.onclick = function (e) {
-    let boardEl = document.getElementById('board')
-    offX = boardEl.offsetLeft
-    offY = boardEl.offsetTop
-    console.log('Offset x,y', offX, offY)
-    console.log('Expected (49, 7)')
-    let x = e.layerX
-    let y = e.layerY
-    console.log('x', x)
-    console.log('y', y)
-    console.log("box", Math.floor((y - offY) / board.tileWidth), Math.floor((x - offX) / board.tileWidth))
-    let moveX = Math.floor((y - offY) / board.tileWidth)
-    let moveY = Math.floor((x - offX) / board.tileWidth)
-    board.move([moveX, moveY])
+    game.handleClick(e)
+}
+
+function shuffleClick() {
+    game.shuffle(50)
 }
