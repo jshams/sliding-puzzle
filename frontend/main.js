@@ -1,6 +1,37 @@
 const canvas = document.getElementById('board')
 const ctx = canvas.getContext('2d')
 
+
+function fillRectBorderRadius(x, y, width, height, borderRadius, color) {
+    /**
+    * similar to ctx.fillRect with added borderRadius and color choices
+    * draws to the canvas a rectangle x amd y starting positions
+    * of size width and height, with a rounded border of size borderRadius.
+    * color or "fillstyle" can also be customized
+    */
+    ctx.fillStyle = color
+    ctx.beginPath()
+    // draw vertical (taller) rectangle
+    ctx.rect(x + borderRadius, y, width - 2 * borderRadius, height)
+    // draw horizontal (wider) rectangle
+    ctx.rect(x, y + borderRadius, width, height - 2 * borderRadius)
+    // ctx.arc(left, top, radius, faces right + (0...2)*Math.pi, draw till (0...2)*Math.pi)
+    // ctx.fillStyle = 'blue'
+    // draw top left circle
+    ctx.arc(x + borderRadius, y + borderRadius, borderRadius, Math.PI, 1.5 * Math.PI)
+    // ctx.fill()
+    // draw top right circle
+    ctx.arc(x + width - borderRadius, y + borderRadius, borderRadius, 1.5 * Math.PI, 0)
+    // ctx.fill()
+    // draw bottom left circle
+    ctx.arc(x + borderRadius, y + height - borderRadius, borderRadius, 0.5 * Math.PI, Math.PI)
+    // ctx.fill()
+    // draw bottom right circle
+    ctx.arc(x + width - borderRadius, y + height - borderRadius, borderRadius, 0, 0.5 * Math.PI)
+    ctx.fill()
+}
+
+
 class Tile {
     constructor(num, width, x, y) {
         this.num = num
@@ -15,12 +46,13 @@ class Tile {
         // ctx.fillStyle = 'white'
         // ctx.fillStyle(this.x, this.y, this.width, this.width)
         ctx.fillStyle = 'black'
-        ctx.fillRect(this.x + 2, this.y + 2, this.width - 4, this.width - 4)
-
-        ctx.fillStyle = this.color
-        ctx.fillRect(this.x + 10, this.y + 10, this.width - 20, this.width - 20)
-        ctx.fillStyle = 'black'
-        ctx.font = `${this.fontsize}px Georgia`
+        // ctx.fillRect(this.x + 2, this.y + 2, this.width - 4, this.width - 4)
+        fillRectBorderRadius(this.x + 2, this.y + 2, this.width - 4, this.width - 4, 40, 'black')
+        // ctx.fillStyle = this.color
+        // ctx.fillRect(this.x + 10, this.y + 10, this.width - 20, this.width - 20)
+        ctx.fillStyle = '#53FE08'
+        ctx.font = `${this.fontsize}px Courier New`
+        // ctx.font = `${this.fontsize}px Lucida Console`
         ctx.fillText(this.num.toString(), this.x + this.width / 2.5, this.y + this.width / 1.6)
     }
 
@@ -48,8 +80,6 @@ class Board {
         // update the camvas with measurements
         canvas.width = this.canvasWidth
         canvas.height = this.canvasHeight
-        ctx.fillStyle = 'white'
-        ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight)
         // create tiles arr to store tiles
         this.tiles = []
         this.zeroLoc = this.findZeroLoc()
@@ -143,10 +173,17 @@ class Board {
     }
 }
 
+
 const state = [
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 0],
+]
+
+const state3x4 = [
+    [1, 2, 3, 4],
+    [5, 6, 7, 8],
+    [9, 10, 11, 0]
 ]
 
 const state4x4 = [
@@ -160,12 +197,17 @@ board.display()
 
 
 canvas.onclick = function (e) {
+    let boardEl = document.getElementById('board')
+    offX = boardEl.offsetLeft
+    offY = boardEl.offsetTop
+    console.log('Offset x,y', offX, offY)
+    console.log('Expected (49, 7)')
     let x = e.layerX
     let y = e.layerY
     console.log('x', x)
     console.log('y', y)
-    console.log("box", Math.floor((y - 7) / board.tileWidth), Math.floor((x - 49) / board.tileWidth))
-    let moveX = Math.floor((y - 7) / board.tileWidth)
-    let moveY = Math.floor((x - 49) / board.tileWidth)
+    console.log("box", Math.floor((y - offY) / board.tileWidth), Math.floor((x - offX) / board.tileWidth))
+    let moveX = Math.floor((y - offY) / board.tileWidth)
+    let moveY = Math.floor((x - offX) / board.tileWidth)
     board.move([moveX, moveY])
 }
