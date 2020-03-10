@@ -394,7 +394,7 @@ unsolveable_3x4 = (
     (9, 6, 4, 10)
 )
 
-try_4x4 = (
+medium_4x4 = (
     (4, 15, 11, 10),
     (8, 2, 9, 3),
     (1, 6, 5, 12),
@@ -408,6 +408,27 @@ unsolveable_4x4 = (
     (15, 13, 14, 0)
 )
 
+try_4x5 = (
+    (3, 2, 12, 4, 10),
+    (6, 8, 5, 15, 18),
+    (9, 7, 1, 11, 13),
+    (14, 19, 0, 17, 16)
+)
+
+rotated_4x5 = (
+    (2, 3, 4, 5, 10),
+    (1, 7, 8, 9, 15),
+    (6, 12, 13, 14, 0),
+    (11, 16, 17, 18, 19)
+)
+
+double_rotated_4x5 = (
+    (3, 4, 5, 10, 15),
+    (2, 7, 8, 9, 0),
+    (1, 12, 13, 14, 19),
+    (6, 11, 16, 17, 18)
+)
+
 try_5x5 = (
     (23, 19, 10, 3, 8),
     (0, 2, 24, 17, 16),
@@ -418,7 +439,7 @@ try_5x5 = (
 
 if __name__ == '__main__':
     # change the value of board to use a different one from above
-    board = try_4x4
+    board = medium_4x4
     min_moves, all_moves = optimized_solve(board)
     if min_moves == -1:
         print('This board is unsolveable.')
