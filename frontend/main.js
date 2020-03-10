@@ -173,6 +173,34 @@ class Board {
     }
 }
 
+class Game {
+    constructor(len, width) {
+        this.len = len
+        this.wid = width
+        this.state = this.newState()
+        this.board = new Board(this.state)
+        ctx.clearRect(0, 0, this.board.canvasWidth, this.board.canvasHeight)
+        this.board.display()
+    }
+
+    newState() {
+        const boardMatrix = []
+        // creates a 2d matrix with a solved state
+        let newRow = []
+        for (let i = 1; i < this.len * this.wid; i++) {
+            if ((i - 1) % this.wid === 0) {
+                if (newRow.length > 1) {
+                    boardMatrix.push(newRow)
+                    newRow = []
+                }
+            }
+            newRow.push(i)
+        }
+        newRow.push(0)
+        boardMatrix.push(newRow)
+        return boardMatrix
+    }
+}
 
 const state = [
     [1, 2, 3],
