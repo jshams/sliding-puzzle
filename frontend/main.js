@@ -59,6 +59,9 @@ class Tile {
         ctx.fillText(this.num.toString(), this.x + this.width / 2.5, this.y + this.width / 1.6)
     }
 
+    // t = game.board.tiles[1][0]
+    // for (let i=0; i < 28; i++) {wait(100); t.move(0, -10)}
+
     move(x_inc, y_inc) {
         ctx.clearRect(this.x, this.y, this.width, this.width)
         this.x += x_inc
@@ -150,17 +153,16 @@ class Board {
         }
     }
 
-    move(tileCoordinates) {
-        // move the tile at this coordinate to the zero coordinate
-        // if the x coordinates are invalid do nothing
-        if ((tileCoordinates[0] < 0) || (tileCoordinates[0] >= this.width)) {
-            console.log('invalid move: x coordinate out of bounds')
-            return
-        }
-        // if the y coordinates are invalid do nothing
-        if ((tileCoordinates[1] < 0) || (tileCoordinates[1] >= this.height)) {
+    isValidMove(tileCoordinates) {
+        // if the x coordinates are invalid return false
+        if ((tileCoordinates[0] < 0) || (tileCoordinates[0] >= this.height)) {
             console.log('invalid move: y coordinate out of bounds')
-            return
+            return false
+        }
+        // if the y coordinates are invalid return false
+        if ((tileCoordinates[1] < 0) || (tileCoordinates[1] >= this.width)) {
+            console.log('invalid move: x coordinate out of bounds')
+            return false
         }
         let xdiff = tileCoordinates[0] - this.zeroLoc[0]
         let ydiff = tileCoordinates[1] - this.zeroLoc[1]
@@ -168,15 +170,33 @@ class Board {
         // if the distance of tile from empty is not 1 its an invalid swap
         if (dist != 1) {
             console.log('invalid move: tile not next to empty tile')
-            // do nothing
+            return false
+        }
+        return true
+    }
+
+    move(tileCoordinates) {
+        // move the tile at this coordinate to the zero coordinate
+        if (!this.isValidMove(tileCoordinates)) {
             return
         }
+        let xdiff = -7 * (tileCoordinates[0] - this.zeroLoc[0])
+        let ydiff = -7 * (tileCoordinates[1] - this.zeroLoc[1])
         // get the current tile
         let tile = this.tiles[tileCoordinates[0]][tileCoordinates[1]]
-        for (let i = 0; i < this.tileWidth; i++) {
-            tile.move(-ydiff, -xdiff)
-            // add some sleep to make it dramatic
+        var numIters = this.tileWidth / 7
+        var iterNum = 1
+
+        function moveTile() {
+            tile.move(ydiff, xdiff)
+            // console.log(iterNum, this.tileWidth)
+            if (++iterNum > numIters) {
+                clearInterval(animation)
+            }
         }
+
+        var animation = setInterval(moveTile, 2)
+
         // update state, tile locations, and zero loc
         this.tiles[this.zeroLoc[0]][this.zeroLoc[1]] = this.tiles[tileCoordinates[0]][tileCoordinates[1]]
         this.tiles[tileCoordinates[0]][tileCoordinates[1]] = 0
@@ -214,24 +234,20 @@ class Game {
         this.wid = width
         this.board = new Board(this.newState())
         ctx.clearRect(0, 0, this.board.canvasWidth, this.board.canvasHeight)
-        this.shuffle(50)
+        // this.shuffle(10)
         this.board.display()
         this.numMoves = 0
         this.isSolved = false
     }
 
     handleClick(e) {
-        let offX = BOARDEL.offsetLeft
-        let offY = BOARDEL.offsetTop
-        console.log('Offset x,y', offX, offY)
-        console.log('Expected (49, 7)')
-        let x = e.layerX
-        let y = e.layerY
+        let x = e.clientX - canvas.offsetLeft
+        let y = e.clientY - canvas.offsetTop
         console.log('x', x)
         console.log('y', y)
-        console.log("box", Math.floor((y - offY) / this.board.tileWidth), Math.floor((x - offX) / this.board.tileWidth))
-        let moveX = Math.floor((y - offY) / this.board.tileWidth)
-        let moveY = Math.floor((x - offX) / this.board.tileWidth)
+        console.log("box", Math.floor(y / this.board.tileWidth), Math.floor(x / this.board.tileWidth))
+        let moveX = Math.floor(y / this.board.tileWidth)
+        let moveY = Math.floor(x / this.board.tileWidth)
         console.log('tilewidth:', this.board.tileWidth)
         const didMove = this.board.move([moveX, moveY])
         if (didMove) {
@@ -311,7 +327,7 @@ class Game {
 }
 
 
-const game = new Game(3, 3)
+const game = new Game(4, 3)
 
 canvas.onclick = function (e) {
     game.handleClick(e)
@@ -319,4 +335,5 @@ canvas.onclick = function (e) {
 
 function shuffleClick() {
     game.shuffle(50)
+    CONGRATS.innerHTML = ''
 }
