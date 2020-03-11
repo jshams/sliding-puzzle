@@ -5,6 +5,7 @@ const SHUFFLEBTN = document.getElementById('shuffle-btn')
 const CONGRATS = document.getElementById('congrats')
 const DROPDOWN = document.getElementById('dropdown')
 const DROPDOWNS = document.getElementsByClassName("dropdown-content")
+const MANDIST = document.getElementById('man-dist')
 
 
 function fillRectBorderRadius(x, y, width, height, borderRadius, color) {
@@ -229,6 +230,29 @@ class Board {
         }
         return true
     }
+
+    manhattanDistance() {
+        // dist = 0
+        let dist = 0
+        // for iterate over x and y in puzzle
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                // if the number at this position is 0, skip it
+                if (this.state[y][x] != 0) {
+                    // get the number that is in this position
+                    let currentVal = this.state[y][x]
+                    // calculate the desired x and y positions of the number
+                    let desY = Math.floor((currentVal - 1) / this.width)
+                    let desX = (currentVal - 1) % this.width
+                    console.log(desX)
+                    console.log(desY)
+                    // add the differences of actual and desired vals to dist
+                    dist += Math.abs(x - desX) + Math.abs(y - desY)
+                }
+            }
+        }
+        return dist
+    }
 }
 
 class Game {
@@ -236,11 +260,12 @@ class Game {
         this.width = width
         this.height = height
         this.board = new Board(this.newState())
-        ctx.clearRect(0, 0, this.board.canvasWidth, this.board.canvasHeight)
-        // this.shuffle(10)
+        this.manDist = 0
+        this.shuffle((width * height) ** 2)
         this.board.display()
         this.numMoves = 0
         this.isSolved = false
+        this.updateManDist()
     }
 
     handleClick(e) {
@@ -256,6 +281,7 @@ class Game {
         const didMove = this.board.move([moveX, moveY])
         if (didMove) {
             this.incNumMoves()
+            this.updateManDist()
             if (this.isSolved) {
                 this.isSolved = false
                 this.discongratulate()
@@ -296,6 +322,7 @@ class Game {
         if (this.board.isSolved()) {
             this.shuffle(n)
         }
+        this.updateManDist()
     }
 
     randomMove() {
@@ -348,6 +375,11 @@ class Game {
         CONGRATS.classList.add("unsolved");
         CONGRATS.classList.remove("solved")
     }
+
+    updateManDist() {
+        this.manDist = this.board.manhattanDistance()
+        MANDIST.innerHTML = this.manDist.toString()
+    }
 }
 
 /* When the user clicks on the button, 
@@ -375,7 +407,6 @@ game.shuffle((width * height) ** 2)
 
 function newGame(width, height) {
     game = new Game(width, height)
-    game.shuffle((width * height) ** 2)
 }
 
 
