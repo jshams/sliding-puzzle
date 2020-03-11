@@ -1,6 +1,5 @@
 const canvas = document.getElementById('board')
 const ctx = canvas.getContext('2d')
-const BOARDEL = document.getElementById('board')
 const NUMMOVES = document.getElementById('num-moves')
 const SHUFFLEBTN = document.getElementById('shuffle-btn')
 const CONGRATS = document.getElementById('congrats')
@@ -252,7 +251,16 @@ class Game {
         const didMove = this.board.move([moveX, moveY])
         if (didMove) {
             this.incNumMoves()
-            if (this.board.isSolved()) { this.congratulate() }
+            if (this.isSolved) {
+                this.isSolved = false
+                this.discongratulate()
+                this.numMoves = 0
+                this.incNumMoves()
+            }
+            if (this.board.isSolved()) {
+                this.congratulate()
+                this.isSolved = true
+            }
         }
     }
 
@@ -280,6 +288,9 @@ class Game {
         }
         this.numMoves = -1
         this.incNumMoves()
+        if (this.board.isSolved()) {
+            this.shuffle(n)
+        }
     }
 
     randomMove() {
@@ -324,10 +335,14 @@ class Game {
     congratulate() {
         CONGRATS.innerHTML = `Congratulations! You completed the puzzle in ${this.numMoves} moves!`
     }
+
+    discongratulate() {
+        CONGRATS.innerHTML = ''
+    }
 }
 
 
-const game = new Game(4, 3)
+const game = new Game(3, 3)
 
 canvas.onclick = function (e) {
     game.handleClick(e)
