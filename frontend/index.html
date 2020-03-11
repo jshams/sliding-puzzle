@@ -19,6 +19,19 @@
         <h2 class="num-moves-title">Num moves: <p class="num-moves" id='num-moves'>0</p>
         </h2>
     </div>
+
+    <div class="dropdown">
+        <button onclick="dropdown()" class="dropbtn">Change size</button>
+        <div id="dropdown" class="dropdown-content">
+            <button onclick="newGame(2,2)">2x2</button>
+            <button onclick="newGame(3,3)">3x3</button>
+            <button onclick="newGame(4,4)">4x4</button>
+            <button onclick="newGame(5,5)">5x5</button>
+            <button onclick="newGame(6,6)">6x6</button>
+        </div>
+    </div>
+
+
     <script src="main.js"></script>
 </body>
 
