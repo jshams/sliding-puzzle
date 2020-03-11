@@ -49,7 +49,7 @@ class Tile {
         // ctx.fillStyle(this.x, this.y, this.width, this.width)
         ctx.fillStyle = 'black'
         // ctx.fillRect(this.x + 2, this.y + 2, this.width - 4, this.width - 4)
-        fillRectBorderRadius(this.x + 2, this.y + 2, this.width - 4, this.width - 4, 40, 'black')
+        fillRectBorderRadius(this.x + 4, this.y + 4, this.width - 8, this.width - 8, 40, 'black')
         // ctx.fillStyle = this.color
         // ctx.fillRect(this.x + 10, this.y + 10, this.width - 20, this.width - 20)
         ctx.fillStyle = '#53FE08'
@@ -74,6 +74,7 @@ class Board {
         this.state = state
         this.width = state[0].length
         this.height = state.length
+        this.pixelWidth = 600
         // boardState is a 2d arr or tuple with the tile locations
         // solved state for 3x3: ((1, 2, 3), (4, 5, 6), (7, 8, 0))
         this.boardState = state
@@ -96,18 +97,18 @@ class Board {
 
     getMeasurements() {
         if (this.width == this.height) {
-            this.canvasHeight = 840
-            this.canvasWidth = 840
-            this.tileWidth = 840 / this.width
+            this.canvasHeight = this.pixelWidth
+            this.canvasWidth = this.pixelWidth
+            this.tileWidth = this.pixelWidth / this.width
         }
         else if (this.width < this.height) {
-            this.canvasHeight = 840
-            this.tileWidth = 840 / this.height
+            this.canvasHeight = this.pixelWidth
+            this.tileWidth = this.pixelWidth / this.height
             this.canvasWidth = this.tileWidth * this.width
         }
         else {
-            this.canvasWidth = 840
-            this.tileWidth = 840 / this.width
+            this.canvasWidth = this.pixelWidth
+            this.tileWidth = this.pixelWidth / this.width
             this.canvasHeight = this.tileWidth * this.height
         }
     }
@@ -179,11 +180,11 @@ class Board {
         if (!this.isValidMove(tileCoordinates)) {
             return
         }
-        let xdiff = -7 * (tileCoordinates[0] - this.zeroLoc[0])
-        let ydiff = -7 * (tileCoordinates[1] - this.zeroLoc[1])
+        let xdiff = -5 * (tileCoordinates[0] - this.zeroLoc[0])
+        let ydiff = -5 * (tileCoordinates[1] - this.zeroLoc[1])
         // get the current tile
         let tile = this.tiles[tileCoordinates[0]][tileCoordinates[1]]
-        var numIters = this.tileWidth / 7
+        var numIters = this.tileWidth / 5
         var iterNum = 1
 
         function moveTile() {
@@ -242,6 +243,7 @@ class Game {
     handleClick(e) {
         let x = e.clientX - canvas.offsetLeft
         let y = e.clientY - canvas.offsetTop
+
         console.log('x', x)
         console.log('y', y)
         console.log("box", Math.floor(y / this.board.tileWidth), Math.floor(x / this.board.tileWidth))
