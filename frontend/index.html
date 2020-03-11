@@ -12,10 +12,13 @@
     <h1 class="title"> Sliding Puzzle</h1>
     <canvas id="board" class="board"></canvas>
     <div class="board-border"></div>
-    <h2>Number of moves: <p id='num-moves'>0</p>
-    </h2>
-    <button onclick="shuffleClick()" id="shuffle-btn">Shuffle</button>
-    <h1 id="congrats"></h1>
+    <button onclick="shuffleClick()" class="shuffle-btn" id="shuffle-btn">Shuffle</button>
+    <div class="status">
+        <h2 class="status-title">Status:</h2>
+        <h1 id="congrats" class="solve-status unsolved">Unsolved</h1>
+        <h2 class="num-moves-title">Num moves: <p class="num-moves" id='num-moves'>0</p>
+        </h2>
+    </div>
     <script src="main.js"></script>
 </body>
 
