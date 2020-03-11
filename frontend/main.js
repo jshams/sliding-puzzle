@@ -49,7 +49,7 @@ class Tile {
         // ctx.fillStyle(this.x, this.y, this.width, this.width)
         ctx.fillStyle = 'black'
         // ctx.fillRect(this.x + 2, this.y + 2, this.width - 4, this.width - 4)
-        fillRectBorderRadius(this.x + 4, this.y + 4, this.width - 8, this.width - 8, 40, 'black')
+        fillRectBorderRadius(this.x + 4, this.y + 4, this.width - 8, this.width - 8, this.width / 5, 'black')
         // ctx.fillStyle = this.color
         // ctx.fillRect(this.x + 10, this.y + 10, this.width - 20, this.width - 20)
         ctx.fillStyle = '#53FE08'
@@ -229,9 +229,9 @@ class Board {
 }
 
 class Game {
-    constructor(len, width) {
-        this.len = len
-        this.wid = width
+    constructor(width, height) {
+        this.width = width
+        this.height = height
         this.board = new Board(this.newState())
         ctx.clearRect(0, 0, this.board.canvasWidth, this.board.canvasHeight)
         // this.shuffle(10)
@@ -270,8 +270,8 @@ class Game {
         const boardMatrix = []
         // creates a 2d matrix with a solved state
         let newRow = []
-        for (let i = 1; i < this.len * this.wid; i++) {
-            if ((i - 1) % this.wid === 0) {
+        for (let i = 1; i < this.width * this.height; i++) {
+            if ((i - 1) % this.width === 0) {
                 if (newRow.length > 1) {
                     boardMatrix.push(newRow)
                     newRow = []
@@ -335,22 +335,29 @@ class Game {
     }
 
     congratulate() {
-        CONGRATS.innerHTML = `Congratulations! You completed the puzzle in ${this.numMoves} moves!`
+        CONGRATS.innerHTML = `Solved!`
+        CONGRATS.classList.add("solved")
+        CONGRATS.classList.remove("unsolved");
     }
 
     discongratulate() {
-        CONGRATS.innerHTML = ''
+        CONGRATS.innerHTML = 'Unsolved'
+        CONGRATS.classList.add("unsolved");
+        CONGRATS.classList.remove("solved")
     }
 }
 
+const width = 3
+const height = 3
+const game = new Game(width, height)
+game.shuffle((width * height) ** 2)
 
-const game = new Game(3, 3)
 
 canvas.onclick = function (e) {
     game.handleClick(e)
 }
 
 function shuffleClick() {
-    game.shuffle(50)
-    CONGRATS.innerHTML = ''
+    game.shuffle((width * height) ** 2)
+    game.discongratulate()
 }
