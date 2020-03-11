@@ -3,6 +3,9 @@ const ctx = canvas.getContext('2d')
 const NUMMOVES = document.getElementById('num-moves')
 const SHUFFLEBTN = document.getElementById('shuffle-btn')
 const CONGRATS = document.getElementById('congrats')
+const DROPDOWN = document.getElementById('dropdown')
+const DROPDOWNS = document.getElementsByClassName("dropdown-content")
+
 
 function fillRectBorderRadius(x, y, width, height, borderRadius, color) {
     /**
@@ -347,10 +350,34 @@ class Game {
     }
 }
 
+/* When the user clicks on the button, 
+toggle between hiding and showing the dropdown content */
+function dropdown() {
+    DROPDOWN.classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function (event) {
+    if (!event.target.matches('.dropbtn')) {
+        for (let i = 0; i < DROPDOWNS.length; i++) {
+            if (DROPDOWNS[i].classList.contains('show')) {
+                DROPDOWNS[i].classList.remove('show');
+            }
+        }
+    }
+}
+
 const width = 3
 const height = 3
-const game = new Game(width, height)
+let game = new Game(width, height)
 game.shuffle((width * height) ** 2)
+
+
+function newGame(width, height) {
+    game = new Game(width, height)
+    game.shuffle((width * height) ** 2)
+}
+
 
 
 canvas.onclick = function (e) {
