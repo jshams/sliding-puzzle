@@ -7,7 +7,6 @@ const DROPDOWN = document.getElementById('dropdown')
 const DROPDOWNS = document.getElementsByClassName("dropdown-content")
 const MANDIST = document.getElementById('man-dist')
 
-
 function fillRectBorderRadius(x, y, width, height, borderRadius, color) {
     /**
     * similar to ctx.fillRect with added borderRadius and color choices
@@ -199,7 +198,7 @@ class Board {
             }
         }
 
-        var animation = setInterval(moveTile, 2)
+        var animation = setInterval(moveTile, 1)
 
         // update state, tile locations, and zero loc
         this.tiles[this.zeroLoc[0]][this.zeroLoc[1]] = this.tiles[tileCoordinates[0]][tileCoordinates[1]]
@@ -261,11 +260,46 @@ class Game {
         this.height = height
         this.board = new Board(this.newState())
         this.manDist = 0
-        this.shuffle((width * height) ** 2)
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        this.shuffle()
         this.board.display()
         this.numMoves = 0
         this.isSolved = false
         this.updateManDist()
+    }
+
+    keyPress(e) {
+        const moveLoc = [...this.board.zeroLoc]
+        let inversion = false
+        let one = 1
+        if (inversion) {
+            one = -one
+        }
+        // left arrow key press
+        if (e.keyCode == 37) {
+            moveLoc[1] -= one
+        }
+        // right arrow key press
+        else if (e.keyCode == 39) {
+            moveLoc[1] += one
+        }
+        // up arrow key press
+        else if (e.keyCode == 38) {
+            moveLoc[0] -= one
+        }
+        // down arrow key press
+        else if (e.keyCode == 40) {
+            moveLoc[0] += one
+        }
+        else {
+            if (e.keyCode == 32) {
+                this.shuffle()
+            }
+            return
+        }
+        console.log(this.board.zeroLoc)
+        console.log(moveLoc)
+        this.move(...moveLoc)
     }
 
     handleClick(e) {
@@ -278,7 +312,11 @@ class Game {
         let moveX = Math.floor(y / this.board.tileWidth)
         let moveY = Math.floor(x / this.board.tileWidth)
         console.log('tilewidth:', this.board.tileWidth)
-        const didMove = this.board.move([moveX, moveY])
+        this.move(moveX, moveY)
+    }
+
+    move(x, y) {
+        const didMove = this.board.move([x, y])
         if (didMove) {
             this.incNumMoves()
             this.updateManDist()
@@ -313,7 +351,11 @@ class Game {
         return boardMatrix
     }
 
-    shuffle(n) {
+    shuffle(n = null) {
+        if (n === null) {
+            const c = (this.width * this.height) ** 2 / 2
+            n = Math.floor(Math.random() * c + c)
+        }
         for (let i = 0; i < n; i++) {
             this.randomMove()
         }
@@ -323,6 +365,7 @@ class Game {
             this.shuffle(n)
         }
         this.updateManDist()
+        this.discongratulate()
     }
 
     randomMove() {
@@ -402,7 +445,7 @@ window.onclick = function (event) {
 const width = 3
 const height = 3
 let game = new Game(width, height)
-game.shuffle((width * height) ** 2)
+game.shuffle()
 
 
 function newGame(width, height) {
@@ -416,6 +459,9 @@ canvas.onclick = function (e) {
 }
 
 function shuffleClick() {
-    game.shuffle((width * height) ** 2)
-    game.discongratulate()
+    game.shuffle()
 }
+
+document.onkeydown = function (event) {
+    game.keyPress(event)
+};
