@@ -72,6 +72,7 @@ class Tile {
     }
 }
 
+
 class Board {
     constructor(state, gameBoard = true) {
         // if gameBoard is true Board will find canvas measurements
@@ -261,6 +262,31 @@ class Board {
         return nextMoves
     }
 
+    inversionCount() {
+        // # flatten the puzzle and find if the zero height is odd or even
+        let flatBoard = []
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                const num = this.state[y][x]
+                if (num != 0) {
+                    flatBoard.push(num)
+                }
+            }
+        }
+        let count = 0
+        // # for each number in the one d puzzle
+        for (let i = 0; i < flatBoard.length; i++) {
+            // # for each number succeeding the current number
+            for (let j = i + 1; j < flatBoard.length; j++) {
+                // # if the number is greater than the latter number
+                if (flatBoard[i] > flatBoard[j]) {
+                    count += 1
+                }
+            }
+        }
+        return count
+    }
+
     manhattanDistance() {
         // dist = 0
         let dist = 0
@@ -282,6 +308,7 @@ class Board {
         return dist
     }
 }
+
 
 class Game {
     constructor(width, height) {
@@ -330,8 +357,6 @@ class Game {
             }
             return
         }
-        // console.log(this.board.zeroLoc)
-        // console.log(moveLoc)
         this.move(...moveLoc)
     }
 
@@ -454,7 +479,26 @@ class Game {
         this.manDist = this.board.manhattanDistance()
         MANDIST.innerHTML = this.manDist.toString()
     }
+
+    solve() {
+        let solver = new Solver(this.board.state)
+        let solution = solver.solve()
+        // for every move in the solution
+
+        var iterNum = 0
+        var self = this
+
+        function moveTile() {
+            self.move(...solution[iterNum])
+            if (++iterNum == solution.length) {
+                clearInterval(animation)
+            }
+        }
+
+        var animation = setInterval(moveTile, 500)
+    }
 }
+
 
 class Solver {
     constructor(state) {
@@ -525,9 +569,6 @@ class Solver {
     }
 }
 
-let testBoard = [[1, 2, 3], [0, 4, 5], [7, 8, 6]]
-let testSolve = new Solver(testBoard)
-
 
 /* When the user clicks on the button, 
 toggle between hiding and showing the dropdown content */
@@ -566,6 +607,14 @@ function shuffleClick() {
 
 function undoClick() {
     game.undo()
+}
+
+function solveClick() {
+    if (game.width > 3) {
+        alert("Ai needs improvement")
+        return
+    }
+    game.solve()
 }
 
 document.onkeydown = function (event) {
