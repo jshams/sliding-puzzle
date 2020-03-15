@@ -6,6 +6,7 @@ const CONGRATS = document.getElementById('congrats')
 const DROPDOWN = document.getElementById('dropdown')
 const DROPDOWNS = document.getElementsByClassName("dropdown-content")
 const MANDIST = document.getElementById('man-dist')
+var DISABLEUSERACTIVITY = false
 
 function fillRectBorderRadius(x, y, width, height, borderRadius, color) {
     /**
@@ -326,6 +327,7 @@ class Game {
     }
 
     keyPress(e) {
+        if (DISABLEUSERACTIVITY) { return }
         const moveLoc = [...this.board.zeroLoc]
         let inversion = false
         let one = 1
@@ -361,6 +363,7 @@ class Game {
     }
 
     handleClick(e) {
+        if (DISABLEUSERACTIVITY) { return }
         let x = e.clientX - canvas.offsetLeft
         let y = e.clientY - canvas.offsetTop
 
@@ -412,6 +415,7 @@ class Game {
     }
 
     shuffle(n = null) {
+        if (DISABLEUSERACTIVITY) { return }
         if (n === null) {
             const c = (this.width * this.height) ** 2 / 2
             n = Math.floor(Math.random() * c + c)
@@ -450,6 +454,7 @@ class Game {
     }
 
     undo() {
+        if (DISABLEUSERACTIVITY) { return }
         // if no previous moves do nothing
         if (this.moves.length == 0) {
             return
@@ -482,9 +487,11 @@ class Game {
     }
 
     solve() {
+        if (DISABLEUSERACTIVITY) { return }
+        DISABLEUSERACTIVITY = true
         let solver = new Solver(this.board.state)
         let solution = solver.solve()
-        // for every move in the solution
+        if (solution.length == 0) { return }
 
         var iterNum = 0
         var self = this
@@ -496,7 +503,9 @@ class Game {
             }
         }
 
-        var animation = setInterval(moveTile, 500)
+        let animationInterval = 500
+        var animation = setInterval(moveTile, animationInterval)
+        setTimeout(() => DISABLEUSERACTIVITY = false, animationInterval * solution.length)
     }
 }
 
@@ -512,7 +521,10 @@ class Solver {
     enqueueFirstBoard() {
         // create the first board instance of starting state
         let firstBoard = new Board(this.state, false)
-        if (firstBoard.isSolved()) { return true }
+        if (firstBoard.isSolved()) {
+            this.solution = []
+            return
+        }
         // find the zero location (only once)
         firstBoard.zeroLoc = firstBoard.findZeroLoc()
         firstBoard.moves = []
@@ -545,11 +557,9 @@ class Solver {
     }
 
     solve() {
+        this.enqueueFirstBoard()
         if (this.solution != null) {
             return this.solution
-        }
-        if (this.enqueueFirstBoard()) {
-            return []
         }
         while (this.queue.length > 0) {
             let currBoard = this.queue.shift()
@@ -574,6 +584,7 @@ class Solver {
 /* When the user clicks on the button, 
 toggle between hiding and showing the dropdown content */
 function dropdown() {
+    if (DISABLEUSERACTIVITY) { return }
     DROPDOWN.classList.toggle("show");
 }
 
