@@ -73,14 +73,13 @@ class Tile {
 }
 
 class Board {
-    constructor(state) {
+    constructor(state, gameBoard = true) {
+        // state is a 2d arr with the tile locations
+        // solved state for 3x3: [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
         this.state = state
         this.width = state[0].length
         this.height = state.length
         this.pixelWidth = 600
-        // boardState is a 2d arr or tuple with the tile locations
-        // solved state for 3x3: ((1, 2, 3), (4, 5, 6), (7, 8, 0))
-        this.boardState = state
         this.canvasWidth = null
         this.canvasHeight = null
         this.tileWidth = null
@@ -157,20 +156,21 @@ class Board {
     }
 
     isValidMove(tileCoordinates) {
-        // if the x coordinates are invalid return false
+        // if the x coordinates are out of bounds return false
         if ((tileCoordinates[0] < 0) || (tileCoordinates[0] >= this.height)) {
             console.log('invalid move: y coordinate out of bounds')
             return false
         }
-        // if the y coordinates are invalid return false
+        // if the y coordinates are out of bounds return false
         if ((tileCoordinates[1] < 0) || (tileCoordinates[1] >= this.width)) {
             console.log('invalid move: x coordinate out of bounds')
             return false
         }
+        // find the distance of the tile position to the zero position
         let xdiff = tileCoordinates[0] - this.zeroLoc[0]
         let ydiff = tileCoordinates[1] - this.zeroLoc[1]
         let dist = Math.abs(xdiff) + Math.abs(ydiff)
-        // if the distance of tile from empty is not 1 its an invalid swap
+        // if the distance of tile to zero is not 1 its an invalid swap
         if (dist != 1) {
             console.log('invalid move: tile not next to empty tile')
             return false
@@ -230,6 +230,28 @@ class Board {
         return true
     }
 
+    getNextMoves() {
+        const x = this.zeroLoc[0]
+        const y = this.zeroLoc[1]
+        let nextMoves = []
+        // (x - 1, y) if x > 0
+        if (x > 0) {
+            nextMoves.push([x - 1, y])
+        }
+        // (x + 1, y) if x < len(puzzle) - 1
+        if (x < this.width - 1) {
+            nextMoves.push([x + 1, y])
+        }
+        // (x, y - 1) if y > 0
+        if (y > 0) {
+            nextMoves.push([x, y - 1])
+        }
+        // (x, y + 1) if y < len(puzzle[-1]) - 1
+        if (y < this.height - 1) {
+            nextMoves.push([x, y + 1])
+        }
+        return nextMoves
+    }
     manhattanDistance() {
         // dist = 0
         let dist = 0
@@ -264,6 +286,7 @@ class Game {
         this.shuffle()
         this.board.display()
         this.numMoves = 0
+        this.moves = []
         this.isSolved = false
         this.updateManDist()
     }
@@ -295,8 +318,12 @@ class Game {
             if (e.keyCode == 32) {
                 this.shuffle()
             }
+            else if (e.keyCode == 8) {
+                this.undo()
+            }
             return
         }
+
         console.log(this.board.zeroLoc)
         console.log(moveLoc)
         this.move(...moveLoc)
@@ -316,21 +343,23 @@ class Game {
     }
 
     move(x, y) {
+        let prevZeroLoc = [...this.board.zeroLoc]
         const didMove = this.board.move([x, y])
-        if (didMove) {
+        if (!didMove) { return }
+        this.incNumMoves()
+        this.updateManDist()
+        if (this.isSolved) {
+            this.isSolved = false
+            this.discongratulate()
+            this.numMoves = 0
             this.incNumMoves()
-            this.updateManDist()
-            if (this.isSolved) {
-                this.isSolved = false
-                this.discongratulate()
-                this.numMoves = 0
-                this.incNumMoves()
-            }
-            if (this.board.isSolved()) {
-                this.congratulate()
-                this.isSolved = true
-            }
+            this.moves = []
         }
+        if (this.board.isSolved()) {
+            this.congratulate()
+            this.isSolved = true
+        }
+        this.addMove(prevZeroLoc)
     }
 
     newState() {
@@ -366,45 +395,41 @@ class Game {
         }
         this.updateManDist()
         this.discongratulate()
+        this.moves = []
     }
 
     randomMove() {
         const zeroLoc = this.board.zeroLoc
-        const nextMoves = this.getNextMoves(zeroLoc)
+        const nextMoves = this.board.getNextMoves(zeroLoc)
         const randomMoveChoice = this.randomChoice(nextMoves)
         this.board.move(randomMoveChoice)
-    }
-
-    getNextMoves(zeroLoc) {
-        const x = zeroLoc[0]
-        const y = zeroLoc[1]
-        let nextMoves = []
-        // (x - 1, y) if x > 0
-        if (x > 0) {
-            nextMoves.push([x - 1, y])
-        }
-        // (x + 1, y) if x < len(puzzle) - 1
-        if (x < this.board.width - 1) {
-            nextMoves.push([x + 1, y])
-        }
-        // (x, y - 1) if y > 0
-        if (y > 0) {
-            nextMoves.push([x, y - 1])
-        }
-        // (x, y + 1) if y < len(puzzle[-1]) - 1
-        if (y < this.board.height - 1) {
-            nextMoves.push([x, y + 1])
-        }
-        return nextMoves
     }
 
     randomChoice(arr) {
         return arr[Math.floor(Math.random() * arr.length)]
     }
 
-    incNumMoves() {
-        this.numMoves += 1
+    incNumMoves(n = 1) {
+        this.numMoves += n
         NUMMOVES.innerHTML = this.numMoves.toString()
+    }
+
+    addMove(prevZeroLoc) {
+        this.moves.push(prevZeroLoc)
+    }
+
+    undo() {
+        // if no previous moves do nothing
+        if (this.moves.length == 0) {
+            return
+        }
+        if (this.isSolved) {
+            this.isSolved = false
+        }
+        let lastMove = this.moves.pop()
+        this.move(...lastMove)
+        this.moves.pop()
+        this.incNumMoves(-2)
     }
 
     congratulate() {
@@ -452,14 +477,16 @@ function newGame(width, height) {
     game = new Game(width, height)
 }
 
-
-
 canvas.onclick = function (e) {
     game.handleClick(e)
 }
 
 function shuffleClick() {
     game.shuffle()
+}
+
+function undoClick() {
+    game.undo()
 }
 
 document.onkeydown = function (event) {
