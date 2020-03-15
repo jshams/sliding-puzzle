@@ -74,11 +74,19 @@ class Tile {
 
 class Board {
     constructor(state, gameBoard = true) {
+        // if gameBoard is true Board will find canvas measurements
+        // and create tiles otherwise its being used by solver and
+        // will not need these extra computations, just its 
+        // improvement: make gameBoard a subclass of Board
+
         // state is a 2d arr with the tile locations
         // solved state for 3x3: [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
         this.state = state
         this.width = state[0].length
         this.height = state.length
+        if (!gameBoard) {
+            return
+        }
         this.pixelWidth = 600
         this.canvasWidth = null
         this.canvasHeight = null
@@ -252,6 +260,7 @@ class Board {
         }
         return nextMoves
     }
+
     manhattanDistance() {
         // dist = 0
         let dist = 0
@@ -265,8 +274,6 @@ class Board {
                     // calculate the desired x and y positions of the number
                     let desY = Math.floor((currentVal - 1) / this.width)
                     let desX = (currentVal - 1) % this.width
-                    console.log(desX)
-                    console.log(desY)
                     // add the differences of actual and desired vals to dist
                     dist += Math.abs(x - desX) + Math.abs(y - desY)
                 }
@@ -323,9 +330,8 @@ class Game {
             }
             return
         }
-
-        console.log(this.board.zeroLoc)
-        console.log(moveLoc)
+        // console.log(this.board.zeroLoc)
+        // console.log(moveLoc)
         this.move(...moveLoc)
     }
 
@@ -333,12 +339,12 @@ class Game {
         let x = e.clientX - canvas.offsetLeft
         let y = e.clientY - canvas.offsetTop
 
-        console.log('x', x)
-        console.log('y', y)
-        console.log("box", Math.floor(y / this.board.tileWidth), Math.floor(x / this.board.tileWidth))
+        console.log('Cursor x:', x)
+        console.log('Cursor y:', y)
+        console.log("Tile coordinates:", Math.floor(x / this.board.tileWidth), Math.floor(y / this.board.tileWidth))
         let moveX = Math.floor(y / this.board.tileWidth)
         let moveY = Math.floor(x / this.board.tileWidth)
-        console.log('tilewidth:', this.board.tileWidth)
+        // console.log('tilewidth:', this.board.tileWidth)
         this.move(moveX, moveY)
     }
 
@@ -449,6 +455,79 @@ class Game {
         MANDIST.innerHTML = this.manDist.toString()
     }
 }
+
+class Solver {
+    constructor(state) {
+        this.state = state
+        this.seen = {}
+        this.queue = []
+        this.solution = null
+    }
+
+    enqueueFirstBoard() {
+        // create the first board instance of starting state
+        let firstBoard = new Board(this.state, false)
+        if (firstBoard.isSolved()) { return true }
+        // find the zero location (only once)
+        firstBoard.zeroLoc = firstBoard.findZeroLoc()
+        firstBoard.moves = []
+        this.queue.push(firstBoard)
+        this.seen[firstBoard.state] = true
+        return false
+    }
+
+    move(board, tileCoordinates) {
+        // create a copy of the board state
+        let newState = board.state.map(arr => [...arr])
+        // this.state[this.zeroLoc[0]][this.zeroLoc[1]] = this.state[tileCoordinates[0]][tileCoordinates[1]]
+        newState[board.zeroLoc[0]][board.zeroLoc[1]] = newState[tileCoordinates[0]][tileCoordinates[1]]
+        newState[tileCoordinates[0]][tileCoordinates[1]] = 0
+        let newBoard = new Board(newState, false)
+        newBoard.zeroLoc = tileCoordinates
+        newBoard.moves = [...board.moves]
+        newBoard.moves.push(tileCoordinates)
+        return newBoard
+    }
+
+    getNextStates(board) {
+        let nextMoves = board.getNextMoves()
+        let newBoards = []
+        for (let i = 0; i < nextMoves.length; i++) {
+            let newBoard = this.move(board, nextMoves[i])
+            newBoards.push(newBoard)
+        }
+        return newBoards
+    }
+
+    solve() {
+        if (this.solution != null) {
+            return this.solution
+        }
+        if (this.enqueueFirstBoard()) {
+            return []
+        }
+        while (this.queue.length > 0) {
+            let currBoard = this.queue.shift()
+            let newBoards = this.getNextStates(currBoard)
+            for (let i = 0; i < newBoards.length; i++) {
+                let newBoard = newBoards[i]
+                if (this.seen[newBoard.state] === undefined) {
+                    if (newBoard.isSolved()) {
+                        this.solution = newBoard.moves
+                        return newBoard.moves
+                    }
+                    this.seen[newBoard.state] = true
+                    this.queue.push(newBoard)
+                }
+            }
+        }
+        console.log('UNSOLVEABLE')
+    }
+}
+
+let testBoard = [[1, 2, 3], [0, 4, 5], [7, 8, 6]]
+let testSolve = new Solver(testBoard)
+
 
 /* When the user clicks on the button, 
 toggle between hiding and showing the dropdown content */
