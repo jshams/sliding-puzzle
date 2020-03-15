@@ -488,11 +488,11 @@ class Game {
 
     solve() {
         if (DISABLEUSERACTIVITY) { return }
-        DISABLEUSERACTIVITY = true
         let solver = new Solver(this.board.state)
         let solution = solver.solve()
         if (solution.length == 0) { return }
 
+        DISABLEUSERACTIVITY = true
         var iterNum = 0
         var self = this
 
