@@ -456,6 +456,7 @@ class Game {
         }
         if (this.isSolved) {
             this.isSolved = false
+            this.discongratulate()
         }
         let lastMove = this.moves.pop()
         this.move(...lastMove)
