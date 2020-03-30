@@ -9,8 +9,9 @@ This project began simply as an algorithm that can solve sliding puzzles, but wh
 ---
 
 ## How to play
+Launch the app [here](https://jshams.github.io/sliding-puzzle/frontend/).
 The goal of the game is to move numbered tiles until the tiles are order. A tile can only be moved into the blank spot. 
-### Moving
+### Move
 To move a tile into the blank position click on it with your cursor.  
 You can also use up, down, left, and right arrows to move the tiles. The blank moves in the direction of the arrow-direction. By clicking the up arrow, the tile above the blank will move down into the blank (the blank moves up).
 ### Shuffle
@@ -25,10 +26,10 @@ The AI solve will learn how to solve the puzzle, then perform its solution. It c
 ---
 
 ## Technologies
-The frontend is built using standard HTML, CSS, and JavaScript.
+The frontend is built using standard **HTML**, **CSS**, and **JavaScript**.
 
-The game is rendered using the JavaScript Canvas API. The Canvas API makes drawing graphics and animations simple.
+The game is rendered using the **JavaScript Canvas API**. The Canvas API makes drawing graphics and animations simple.
 
 The game logic, functionality, and algorithms are also written in JavaScipt to bring the canvas to life.
 
-I used Python to prototype the algorithms to make development easier with libraries I'm more comfortable with. The programs are then translated to JS to allow the game to function.
+I used **Python** to prototype the algorithms to make development easier with libraries I'm more comfortable with. The programs are then translated to JS to allow the game to function.
