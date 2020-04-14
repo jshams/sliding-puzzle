@@ -28,11 +28,19 @@ Dates 4/13-5/8
 
 **The skateboard was already implemented. It was a working sliding puzzle visual with the ability to click on tiles and move them (already done)** 
 
+<img height="300" src="https://media.giphy.com/media/Kc2BimDt39cKYV89wu/giphy.gif"/>
+
+<a href="https://giphy.com/gifs/slidingpuzzle-Kc2BimDt39cKYV89wu">via GIPHY</a>
+
 ## Bike
 **The game has functionality and it can alert you when you have solved the puzzle. You can also shuffle the puzzle and change its size. (already done)** 
 
 ## Car
 **The AI can solve the puzzle. This is already done but only for 2x2 and 3x3 puzzles. My most important goal of this intensive is to improve the AI solver.** 
+
+<img height="300" src="https://media.giphy.com/media/Rki0Obx78hOMNZeqzf/giphy.gif"/>
+
+<a href="https://giphy.com/gifs/slidingpuzzle-Rki0Obx78hOMNZeqzf">via GIPHY</a>
 
 
 ## Personal Achievement Goals:
@@ -93,7 +101,7 @@ Add terminal window on the frontend. This is in the wireframe and it will show t
 
 
 ## Wireframes
-<img src="https://cdn.filestackcontent.com/9AQ1nce0Tqi1Yy0sbscQ"/>
+<img height="200" src="https://cdn.filestackcontent.com/9AQ1nce0Tqi1Yy0sbscQ"/>
 
 **[View the wireframes on figma](https://www.figma.com/file/BuXxboosB21dnLdgpmMt2P/Sliding-Puzzle?node-id=0%3A1)**
 
