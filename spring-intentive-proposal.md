@@ -26,22 +26,40 @@ Dates 4/13-5/8
 
 ## Skateboard
 
-**The skateboard was already implemented. It was a working sliding puzzle visual with the ability to click on tiles and move them (already done)** 
+**An algorithm was also created in python that could solve sliding puzzles, but whats an algorithm without an interface. (already done)** 
+
+<img height="300" src="https://media.giphy.com/media/WrrRcSaOmmpOAf5jSw/giphy.gif"/>
+
+<a href="https://giphy.com/gifs/WrrRcSaOmmpOAf5jSw">via GIPHY</a>
+
+
+## Bike
+**A working sliding puzzle visual with the ability to click on tiles and move them. The user is also alerted when they solve the puzzle. (already done)**
 
 <img height="300" src="https://media.giphy.com/media/Kc2BimDt39cKYV89wu/giphy.gif"/>
 
 <a href="https://giphy.com/gifs/slidingpuzzle-Kc2BimDt39cKYV89wu">via GIPHY</a>
 
-## Bike
-**The game has functionality and it can alert you when you have solved the puzzle. You can also shuffle the puzzle and change its size. (already done)** 
+
 
 ## Car
-**The AI can solve the puzzle. This is already done but only for 2x2 and 3x3 puzzles. My most important goal of this intensive is to improve the AI solver.** 
+**The AI is implemented into the frontend and users can watch the puzzle practically _solve_ itself. There are also some other added features like undo and shuffle that can be controlled with on-screen buttons or using you keyboard. (already done)**
 
 <img height="300" src="https://media.giphy.com/media/Rki0Obx78hOMNZeqzf/giphy.gif"/>
 
 <a href="https://giphy.com/gifs/slidingpuzzle-Rki0Obx78hOMNZeqzf">via GIPHY</a>
 
+
+## Plane
+**This intensive I will be creating the plane. By the end the AI will be able to solve 4x4 puzzles with ease, and 5x5 puzzles slow but hopefully not so slow. My stretch is to craft an algorithm that will solve 6x6 puzzles.**
+
+<img height="300" src="https://media.giphy.com/media/WRp7znNHPT3LRIn12u/giphy.gif"/>
+
+<a href="https://giphy.com/gifs/slidingpuzzle-WRp7znNHPT3LRIn12u/links">via GIPHY</a>
+
+
+
+---
 
 ## Personal Achievement Goals:
 
@@ -49,9 +67,8 @@ Dates 4/13-5/8
 
 ### My Goals
 
-#### Goal 1
+#### Goal 1 - Refactor
 Split up the large JS file into multiple smaller files so the project is easier to navigate.
-Steps to completion:
 
 1. Research different ways of using imports with vanilla JS
     - Import directly into HTML file
@@ -59,44 +76,45 @@ Steps to completion:
     - Bundle JS
 2. Decide ON PAPER how to split up the files
     - Draw it out before doing it
-2. Rearchitect the files
+3. Rearchitect the files
     - split up the large file into multiple small files
+4. It would also be nice to add some comments and docstrings
 
-#### Goal 2
-Improve the AI to use A* method. This will allow the AI to solve up to 4x4 sliding puzzles.
+#### Goal 2 - Solver can solve 4x4
+Improve the AI solver to use A* method. This will allow the AI to solve up to 4x4 sliding puzzles.
 
 1. Implement a priority queue class in JS
-    - This allows the AI to prioritize closer solves in the game tree.
+    - This allows the AI to prioritize closer solves in the game tree
 2. Create the heuristic
-    - Use manhattan distance to guide the AI.
-    - This will help ensure the game tree can cut branches that go in the wrong direction.
-3. Create the improved solver.
+    - Use manhattan distance to guide the AI
+    - This will help ensure the game tree can cut branches that go in the wrong direction
+3. Create the improved solver
 
-#### Goal 3
-Improve the AI to work with 5x5 sliding puzzles. This one is far more complicated than the previous and will require a more advanced algorithm, and lots of testing. The steps below are ideas on how it can work.
+#### Goal 3 - Solver can solve 5x5
+Improve the AI solver to work with 5x5 sliding puzzles. This one is far more complicated than the previous and will require a more advanced algorithm, and lots of testing. The steps below are ideas on how it can work.
 
-1. Use an extra heurisics.
-    - With an added heuristiic we may be able to prioritize boards differently.
-2. Baby steps.
-    - Instead of solving the whole puzzle at once, only focus on on row or column at a time.
-    - This will require its own algorithm and heuristic.
+1. Use an extra heurisics
+    - With an added heuristiic we may be able to prioritize boards differently
+2. Baby steps
+    - Instead of solving the whole puzzle at once, only focus on on row or column at a time
+    - This will require its own algorithm and heuristic
 3. Do research
     - See how other more complex games tackle these issues using AI
-4. Find out if Deep Learning can be applied. (I'd hope so).
-5. Create a hybrid algorithm that uses both DFS and BFS.
+4. Find out if Deep Learning can be applied. (I'd hope so)
+5. Create a hybrid algorithm that uses both DFS and BFS
 
-#### Goal 4
+#### Goal 4 - Improve the frontend
 Add terminal window on the frontend. This is in the wireframe and it will show the user what functions are called in the code when they click certain buttons. I think it will make the game look more *techy*. It can be seen in the wireframes.
 
-1. Create a text container on the frontend to store the terminal text.
+1. Create a text container on the frontend to store the terminal text
     - Give it a set height and allow scrolling
-    - black background
-    - find out how to color some of the text (use a span?)
-2. Create some functions that allow it to update the inner text.
-3. When the puzzle is solving, display the solution.
-    - in python I have implemented a display solution method.
-    - recreate this in JavaScript and try to add the fancy colors.
-    - it might be important to add a seperate move function for when the AI is moving vs when the user is moving.
+    - Black background
+    - Find out how to color some of the text (use a span?)
+2. Create some functions that allow it to update the inner text
+3. When the puzzle is solving, display the solution
+    - In python I have implemented a display solution method
+    - Recreate this in JavaScript and try to add the fancy colors
+    - It might be important to add a seperate move function for when the AI is moving vs when the user is moving
 
 
 
