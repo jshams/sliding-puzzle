@@ -101,7 +101,7 @@ Add terminal window on the frontend. This is in the wireframe and it will show t
 
 
 ## Wireframes
-<img height="200" src="https://cdn.filestackcontent.com/9AQ1nce0Tqi1Yy0sbscQ"/>
+<img height="200" src="https://www.figma.com/file/BuXxboosB21dnLdgpmMt2P/thumbnail?ver=thumbnails/d84aaff6-1e63-4a6b-9188-cdf537a38f5f"/>
 
 **[View the wireframes on figma](https://www.figma.com/file/BuXxboosB21dnLdgpmMt2P/Sliding-Puzzle?node-id=0%3A1)**
 
@@ -119,9 +119,9 @@ Add terminal window on the frontend. This is in the wireframe and it will show t
 
 
 ## Approval Checklist
-- [ ] If I have a team project, I wrote this proposal to represent my work and only my work
-- [ ] I have completed all the necessary parts of this proposal
-- [ ] I linked my proposal in the Spring Intensive Tracker
+- [X] If I have a team project, I wrote this proposal to represent my work and only my work
+- [X] I have completed all the necessary parts of this proposal
+- [X] I linked my proposal in the Spring Intensive Tracker
 
 ### Sign off
 
