@@ -146,4 +146,4 @@ Add terminal window on the frontend. This is in the wireframe and it will show t
 **Student Name:**                
 > Jake Shams / April 13, 2020
 **Make School Advisor Name**
-> TBD
+> Mitchell
