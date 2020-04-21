@@ -1,14 +1,18 @@
 const canvas = document.getElementById('board')
 const ctx = canvas.getContext('2d')
-const NUMMOVES = document.getElementById('num-moves')
-const SHUFFLEBTN = document.getElementById('shuffle-btn')
-const CONGRATS = document.getElementById('congrats')
 const DROPDOWN = document.getElementById('dropdown')
 const DROPDOWNS = document.getElementsByClassName("dropdown-content")
+
+// used by game class
+const NUMMOVES = document.getElementById('num-moves')
+const CONGRATS = document.getElementById('congrats')
 const MANDIST = document.getElementById('man-dist')
+// figure out a solution to stop the solve instead of having this
+// change the AI solve button to a red stop button while solving
 var DISABLEUSERACTIVITY = false
 
-function fillRectBorderRadius(x, y, width, height, borderRadius, color) {
+
+function fillRectBorderRadius(ctx, x, y, width, height, borderRadius, color) {
     /**
     * similar to ctx.fillRect with added borderRadius and color choices
     * draws to the canvas a rectangle x amd y starting positions
@@ -38,7 +42,14 @@ function fillRectBorderRadius(x, y, width, height, borderRadius, color) {
 }
 
 
+/** Tile class for drawing a numbered tile to the canvas in its position */
 class Tile {
+    /** 
+     * @param { num } int The number on the tile
+     * @param { width } int The tile's width in proportion to the canvas
+     * @param { x } int The top left x coordinate of the tile. used to draw.
+     * @param { y } int the top left y coordinate of the tile, used to draw
+     */
     constructor(num, width, x, y) {
         this.num = num
         this.width = width
@@ -49,33 +60,36 @@ class Tile {
     }
 
     draw() {
-        // ctx.fillStyle = 'white'
-        // ctx.fillStyle(this.x, this.y, this.width, this.width)
+        /** draws a tile to the canvas */
         ctx.fillStyle = 'black'
-        // ctx.fillRect(this.x + 2, this.y + 2, this.width - 4, this.width - 4)
-        fillRectBorderRadius(this.x + 4, this.y + 4, this.width - 8, this.width - 8, this.width / 5, 'black')
-        // ctx.fillStyle = this.color
-        // ctx.fillRect(this.x + 10, this.y + 10, this.width - 20, this.width - 20)
+        fillRectBorderRadius(ctx, this.x + 4, this.y + 4, this.width - 8, this.width - 8, this.width / 5, 'black')
         ctx.fillStyle = '#53FE08'
         ctx.font = `${this.fontsize}px Courier New`
-        // ctx.font = `${this.fontsize}px Lucida Console`
         ctx.fillText(this.num.toString(), this.x + this.width / 2.5, this.y + this.width / 1.6)
     }
 
-    // t = game.board.tiles[1][0]
-    // for (let i=0; i < 28; i++) {wait(100); t.move(0, -10)}
 
-    move(x_inc, y_inc) {
+    move(xInc, yInc) {
+        /** 
+         * moves the tile by incrementing or decrementing the x and y
+         * coordinates of the tile then redrawing
+         * @param {xInc} int the increase in the x position of the tile
+         * @param {yInc} int the increase in the y position of the tile
+         */
         ctx.clearRect(this.x, this.y, this.width, this.width)
-        this.x += x_inc
-        this.y += y_inc
+        this.x += xInc
+        this.y += yInc
         this.draw()
     }
 }
 
-
+/**
+ * Board class stores the tiles, and their postion. It can also be used for
+ * drawing to the canvas if gameboard is true (default)
+*/
 class Board {
     constructor(state, gameBoard = true) {
+
         // if gameBoard is true Board will find canvas measurements
         // and create tiles otherwise its being used by solver and
         // will not need these extra computations, just its 
@@ -102,22 +116,31 @@ class Board {
         this.tiles = []
         this.zeroLoc = this.findZeroLoc()
         // create boxes
-        this.createBoxes()
+        this.createTiles()
         // display the board
         // this.display()
     }
 
     getMeasurements() {
+        // gets the measurements for the canvas based off the length and width
+        // of the board.
+
+        // if the width and height are the same, both the width and the height
+        // are of length pixelwidth
         if (this.width == this.height) {
             this.canvasHeight = this.pixelWidth
             this.canvasWidth = this.pixelWidth
             this.tileWidth = this.pixelWidth / this.width
         }
+        // if the width is less than the height, the width will have a shorter
+        // length, and the height will have a length of pixelWidth
         else if (this.width < this.height) {
             this.canvasHeight = this.pixelWidth
             this.tileWidth = this.pixelWidth / this.height
             this.canvasWidth = this.tileWidth * this.width
         }
+        // if the width is gretaer than the height, the height will have a shorter
+        // length, and the width will have a length of pixelWidth
         else {
             this.canvasWidth = this.pixelWidth
             this.tileWidth = this.pixelWidth / this.width
@@ -125,7 +148,11 @@ class Board {
         }
     }
 
-    createBoxes() {
+    createTiles() {
+        /**
+         * Create tile objects and adds them to this.tiles. A d2 array of tiles
+         * the order of this.state.
+         */
         for (let y = 0; y < this.height; y++) {
             let rowTiles = []
             for (let x = 0; x < this.width; x++) {
@@ -147,6 +174,7 @@ class Board {
     }
 
     findZeroLoc() {
+        // finds and returns the location [y, x] of the empty (0) tile
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 if (this.state[y][x] == 0) { return [y, x] }
@@ -155,6 +183,7 @@ class Board {
     }
 
     display() {
+        // draws each tile to the canvas
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 let currTile = this.tiles[y][x]
@@ -166,6 +195,12 @@ class Board {
     }
 
     isValidMove(tileCoordinates) {
+        /**
+        * given an arr of tile coordinates [y, x]. returns a boolean
+        * indicating whether it is a valid move. A move is considered valid
+        * if the tile is next to a zero and not out of bounds.
+        */
+
         // if the x coordinates are out of bounds return false
         if ((tileCoordinates[0] < 0) || (tileCoordinates[0] >= this.height)) {
             console.log('invalid move: y coordinate out of bounds')
@@ -189,6 +224,12 @@ class Board {
     }
 
     move(tileCoordinates) {
+        /**
+         * moves a tile on the canvas to the empty postions.
+         * returns a boolean indicating whether a move was performed.
+         * false is returned when the move is invalid.
+         */
+
         // move the tile at this coordinate to the zero coordinate
         if (!this.isValidMove(tileCoordinates)) {
             return
@@ -220,27 +261,38 @@ class Board {
     }
 
     isSolved() {
-        // for x in range(len(puzzle)):
+        /**
+         * returns a boolean indicating whether the board is solved.
+         */
+
+        // for every row in the board
         for (let y = 0; y < this.height; y++) {
-            //     for y in range(len(puzzle[-1])):
+            // for every row item in the board
             for (let x = 0; x < this.width; x++) {
-                // if x == len(puzzle) - 1 and y == len(puzzle[-1]) - 1:
+                // if the position is the bottom right corner of the board
                 if ((x === this.width - 1) && (y === this.height - 1)) {
                     // continue
                     continue
                 }
-                // if puzzle[x][y] != (x*len(puzzle[-1])) + (y + 1):
+                // get the value of the tile at this position
                 const realVal = this.state[y][x]
+                // get the desires value od this position
                 const desiredVal = (y * this.width) + (x + 1)
+                // if they are different return false
                 if (realVal != desiredVal) {
                     return false
                 }
             }
         }
+        // if no tiles were found in the wrong position return true
         return true
     }
 
     getNextMoves() {
+        /**
+         * retuns a list of valid moves. uses this.zeroLoc to determine
+         * valid moves.
+         */
         const x = this.zeroLoc[0]
         const y = this.zeroLoc[1]
         let nextMoves = []
@@ -289,6 +341,12 @@ class Board {
     }
 
     manhattanDistance() {
+        /**
+         * returns a sum of the manhattan distance from each tile to their
+         * desired location.
+         * A solved board has a man dist of 0
+         */
+
         // dist = 0
         let dist = 0
         // for iterate over x and y in puzzle
@@ -356,6 +414,10 @@ class Game {
             }
             else if (e.keyCode == 8) {
                 this.undo()
+            }
+            else if (e.keyCode == 13) {
+                if (this.width > 3) { alert("AI needs improvement") }
+                else { this.solve() }
             }
             return
         }
