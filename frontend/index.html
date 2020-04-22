@@ -19,7 +19,7 @@
 
 <body>
     <h1 class="title"> Sliding Puzzle</h1>
-    <canvas id="board" class="board"></canvas>
+    <canvas id="board" class="board" width="600px" height="600px"></canvas>
     <div class="board-border"></div>
     <button onclick="shuffleClick()" class="shuffle-btn" id="shuffle-btn">Shuffle</button>
     <div class="status">
@@ -44,10 +44,20 @@
         <p class="man-dist" id="man-dist">
             0
         </p>
+        <!-- <p style="margin-top: 200px;" class="man-dist" id="inversion-count">0</p> -->
     </h2>
     <button class="solve-btn" onclick="solveClick()">
         AI Solve
     </button>
+
+    <script src="./extras/roundedRectangle.js"></script>
+    <script src="./extras/dropdown.js"></script>
+
+
+    <script src="./game-components/tile.js"></script>
+    <script src="./game-components/board.js"></script>
+    <script src="./game-components/game.js"></script>
+    <script src="./game-components/solver.js"></script>
 
     <script src="main.js"></script>
 </body>
