@@ -78,40 +78,40 @@ Split up the large JS file into multiple smaller files so the project is easier 
     - Draw it out before doing it
 - [X] Rearchitect the files
     - split up the large file into multiple small files
-- [] It would also be nice to add some comments and docstrings
+- [ ] It would also be nice to add some comments and docstrings
 
 #### Goal 2 - Solver can solve 4x4
 Improve the AI solver to use A* method. This will allow the AI to solve up to 4x4 sliding puzzles.
 
-- [] Implement a priority queue class in JS
+- [ ] Implement a priority queue class in JS
     - This allows the AI to prioritize closer solves in the game tree
 - [X] Create the heuristic
     - Use manhattan distance to guide the AI
     - This will help ensure the game tree can cut branches that go in the wrong direction
-- [] Create the improved solver
+- [ ] Create the improved solver
 
 #### Goal 3 - Solver can solve 5x5
 Improve the AI solver to work with 5x5 sliding puzzles. This one is far more complicated than the previous and will require a more advanced algorithm, and lots of testing. The steps below are ideas on how it can work.
 
-- [] Use an extra heurisics
+- [ ] Use an extra heurisics
     - With an added heuristiic we may be able to prioritize boards differently
-- [] Baby steps
+- [ ] Baby steps
     - Instead of solving the whole puzzle at once, only focus on on row or column at a time
     - This will require its own algorithm and heuristic
-- [] Do research
+- [ ] Do research
     - See how other more complex games tackle these issues using AI
-- [] Find out if Deep Learning can be applied. (I'd hope so)
-- [] Create a hybrid algorithm that uses both DFS and BFS
+- [ ] Find out if Deep Learning can be applied. (I'd hope so)
+- [ ] Create a hybrid algorithm that uses both DFS and BFS
 
 #### Goal 4 - Improve the frontend
 Add terminal window on the frontend. This is in the wireframe and it will show the user what functions are called in the code when they click certain buttons. I think it will make the game look more *techy*. It can be seen in the wireframes.
 
-- [] Create a text container on the frontend to store the terminal text
+- [ ] Create a text container on the frontend to store the terminal text
     - Give it a set height and allow scrolling
     - Black background
     - Find out how to color some of the text (use a span?)
-- [] Create some functions that allow it to update the inner text
-- [] When the puzzle is solving, display the solution
+- [ ] Create some functions that allow it to update the inner text
+- [ ] When the puzzle is solving, display the solution
     - In python I have implemented a display solution method
     - Recreate this in JavaScript and try to add the fancy colors
     - It might be important to add a seperate move function for when the AI is moving vs when the user is moving
