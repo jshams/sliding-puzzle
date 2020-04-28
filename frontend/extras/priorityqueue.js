@@ -1,5 +1,6 @@
-class MinHeap {
+class PriorityQueue {
     constructor() {
+        // initialize this minheap with an array to store items
         this.items = []
     }
 
@@ -21,17 +22,18 @@ class MinHeap {
         this.items[i2] = placeholder
     }
 
-    push(item) {
-        this.items.push(item)
+    push(item, value) {
+        const newItem = new PriorityQueueItem(item, value)
+        this.items.push(newItem)
         if (this.size() > 1) {
             this.bubbleUp(this.lastIndex())
         }
     }
 
-    pushItems(items) {
+    pushItems(items, values) {
         for (let i = 0; i < items.length; i++) {
-            this.push(items[i])
-            console.log(this.items)
+            this.push(items[i], values[i])
+            // console.log(this.items)
         }
     }
 
@@ -79,7 +81,7 @@ class MinHeap {
         const parentIndex = this.parentIndex(index)
         const parentItem = this.items[parentIndex]
 
-        if (item < parentItem) {
+        if (item.value < parentItem.value) {
             this.swap(index, parentIndex)
             this.bubbleUp(parentIndex)
         }
@@ -93,10 +95,10 @@ class MinHeap {
         const rightIndex = this.rightChild(index)
 
         let largest = index
-        if ((leftIndex <= this.lastIndex()) && (this.items[leftIndex] < item)) {
+        if ((leftIndex <= this.lastIndex()) && (this.items[leftIndex].value < item.value)) {
             largest = leftIndex
         }
-        if ((rightIndex <= this.lastIndex()) && (this.items[rightIndex] < this.items[largest])) {
+        if ((rightIndex <= this.lastIndex()) && (this.items[rightIndex].value < this.items[largest].value)) {
             largest = rightIndex
         }
         if (largest != index) {
@@ -105,5 +107,12 @@ class MinHeap {
                 this.bubbleDown(largest)
             }
         }
+    }
+}
+
+class PriorityQueueItem {
+    constructor(data, value) {
+        this.data = data
+        this.value = value
     }
 }
