@@ -33,3 +33,8 @@ The game is rendered using the **JavaScript Canvas API**. The Canvas API makes d
 The game logic, functionality, and algorithms are also written in JavaScipt to bring the canvas to life.
 
 I used **Python** to prototype the algorithms to make development easier with libraries I'm more comfortable with. The programs are then translated to JS to allow the game to function.
+
+## Updates
+Sliding Puzzle is not a finished project, and it's still being built. In the [current sprint](spring-intentive-proposal.md)
+I am working on improving the solver to handle larger board sizes, refactoring the code to be more maintainable in the future,
+and making some frontend changes to make the experience more interesting. 
