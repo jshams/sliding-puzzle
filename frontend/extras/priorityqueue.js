@@ -1,3 +1,11 @@
+class PriorityQueueItem {
+    constructor(data, value) {
+        this.data = data
+        this.value = value
+    }
+}
+
+
 class PriorityQueue {
     constructor() {
         // initialize this minheap with an array to store items
@@ -107,12 +115,5 @@ class PriorityQueue {
                 this.bubbleDown(largest)
             }
         }
-    }
-}
-
-class PriorityQueueItem {
-    constructor(data, value) {
-        this.data = data
-        this.value = value
     }
 }
