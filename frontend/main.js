@@ -29,10 +29,6 @@ function undoClick() {
 }
 
 function solveClick() {
-    if (game.width > 3) {
-        alert("Ai needs improvement")
-        return
-    }
     game.solve()
 }
 
