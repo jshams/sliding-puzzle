@@ -50,8 +50,7 @@ class Game {
                 this.undo()
             }
             else if (e.keyCode == 13) {
-                if (this.width > 3) { alert("AI needs improvement") }
-                else { this.solve() }
+                this.solve()
             }
             return
         }
@@ -184,8 +183,11 @@ class Game {
 
     solve() {
         if (DISABLEUSERACTIVITY) { return }
-        let solver = new Solver(this.board.state)
-        let solution = solver.solve()
+        this.solver = new Solver(this.board.state)
+        if (this.board.width > 3) {
+            this.solver = new AdvancedSolver(this.board.state)
+        }
+        let solution = this.solver.solve()
         if (solution.length == 0) { return }
 
         DISABLEUSERACTIVITY = true
@@ -199,7 +201,7 @@ class Game {
             }
         }
 
-        let animationInterval = 500
+        let animationInterval = Math.floor(10800 / this.width ** 3)
         var animation = setInterval(moveTile, animationInterval)
         setTimeout(() => DISABLEUSERACTIVITY = false, animationInterval * solution.length)
     }
