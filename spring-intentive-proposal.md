@@ -51,7 +51,7 @@ Dates 4/13-5/8
 
 
 ## Plane
-**This intensive I will be creating the plane. By the end the AI will be able to solve 4x4 puzzles with ease, and 5x5 puzzles slow but hopefully not so slow. My stretch is to craft an algorithm that will solve 6x6 puzzles.**
+**This intensive I will be creating the plane. By the end the AI will be able to solve 4x4 puzzles with ease, and 5x5 puzzles slow but hopefully not so slow. My stretch is to craft an algorithm that will solve 6x6 puzzles. In the current version if you click solve on any puzzle greater than a 3x3 you are alerted "AI needs improvement".**
 
 <img height="300" src="https://media.giphy.com/media/WRp7znNHPT3LRIn12u/giphy.gif"/>
 
@@ -67,7 +67,7 @@ Dates 4/13-5/8
 
 ### My Goals
 
-#### Goal 1 - Refactor
+#### Goal 1 - Refactor (3/4 done)
 Split up the large JS file into multiple smaller files so the project is easier to navigate.
 
 - [X] Research different ways of using imports with vanilla JS
@@ -80,17 +80,17 @@ Split up the large JS file into multiple smaller files so the project is easier 
     - split up the large file into multiple small files
 - [ ] It would also be nice to add some comments and docstrings
 
-#### Goal 2 - Solver can solve 4x4
+#### Goal 2 - Solver can solve 4x4 (Done)
 Improve the AI solver to use A* method. This will allow the AI to solve up to 4x4 sliding puzzles.
 
-- [ ] Implement a priority queue class in JS
+- [X] Implement a priority queue class in JS
     - This allows the AI to prioritize closer solves in the game tree
 - [X] Create the heuristic
     - Use manhattan distance to guide the AI
     - This will help ensure the game tree can cut branches that go in the wrong direction
-- [ ] Create the improved solver
+- [X] Create the improved solver
 
-#### Goal 3 - Solver can solve 5x5
+#### Goal 3 - Solver can solve 5x5 (Done without the steps below)
 Improve the AI solver to work with 5x5 sliding puzzles. This one is far more complicated than the previous and will require a more advanced algorithm, and lots of testing. The steps below are ideas on how it can work.
 
 - [ ] Use an extra heurisics
