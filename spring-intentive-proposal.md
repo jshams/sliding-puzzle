@@ -1,6 +1,5 @@
 # Juniors Spring Intensive Deliverable Proposal
 
-
 Dates 4/13-5/8
 
 **My Name: Jake Shams** 
@@ -103,7 +102,7 @@ Improve the AI solver to work with 5x5 sliding puzzles. This one is far more com
 - [ ] Find out if Deep Learning can be applied. (I'd hope so)
 - [ ] Create a hybrid algorithm that uses both DFS and BFS
 
-#### Goal 4 - Improve the frontend
+#### Goal 4 - Create the shell
 Add terminal window on the frontend. This is in the wireframe and it will show the user what functions are called in the code when they click certain buttons. I think it will make the game look more *techy*. It can be seen in the wireframes.
 
 - [ ] Create a text container on the frontend to store the terminal text
@@ -117,11 +116,13 @@ Add terminal window on the frontend. This is in the wireframe and it will show t
     - It might be important to add a seperate move function for when the AI is moving vs when the user is moving
 
 
-
 ## Wireframes
 <img height="200" src="https://www.figma.com/file/BuXxboosB21dnLdgpmMt2P/thumbnail?ver=thumbnails/d84aaff6-1e63-4a6b-9188-cdf537a38f5f"/>
 
 **[View the wireframes on figma](https://www.figma.com/file/BuXxboosB21dnLdgpmMt2P/Sliding-Puzzle?node-id=0%3A1)**
+
+## Slides
+The slides were created using Jupyter Slides. Check them out - [slides](https://jshams.github.io/sliding-puzzle/spring-intensive/slides.html).
 
 
 ## Evaluation
