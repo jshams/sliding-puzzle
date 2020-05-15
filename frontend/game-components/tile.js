@@ -15,13 +15,20 @@ class Tile {
         this.fontsize = Math.floor(this.width / 2.4)
     }
 
-    draw() {
+    draw(color = "black") {
         /** draws a tile to the canvas */
         ctx.fillStyle = 'black'
-        fillRectBorderRadius(ctx, this.x + 4, this.y + 4, this.width - 8, this.width - 8, this.width / 5, 'black')
+        fillRectBorderRadius(ctx, this.x + 4, this.y + 4, this.width - 8, this.width - 8, Math.floor(this.width / 4), color)
         ctx.fillStyle = '#53FE08'
         ctx.font = `${this.fontsize}px Courier New`
-        ctx.fillText(this.num.toString(), this.x + this.width / 2.5, this.y + this.width / 1.6)
+        let leftPad = this.width / 2.5
+        if (this.num >= 10) {
+            leftPad = this.width / 4
+        }
+        if (this.num >= 100) {
+            leftPad = this.width / 6
+        }
+        ctx.fillText(this.num.toString(), this.x + leftPad, this.y + this.width / 1.6)
     }
 
 
@@ -33,6 +40,7 @@ class Tile {
          * @param {yInc} int the increase in the y position of the tile
          */
         ctx.clearRect(this.x, this.y, this.width, this.width)
+        // fillRectBorderRadius(ctx, this.x + 3, this.y + 3, this.width, this.width, Math.floor(this.width / 4), "#2B8F11")
         this.x += xInc
         this.y += yInc
         this.draw()
